@@ -71,7 +71,7 @@ http.createServer(async (req, res) => {
     if (!user) return reply(res, 401, { error: 'Sign in required' })
     try { const input = await readBody(req); user.name = clean(input.name, 24); user.bio = clean(input.bio, 100); user.color = /^#[0-9a-f]{6}$/i.test(input.color) ? input.color : '#7855d9'; if (!user.name) throw new Error('Display name is required.'); saveUsers(); return reply(res, 200, { user: publicUser(user) }) } catch (error) { return reply(res, 400, { error: error.message }) }
   }
-  const protectedPaths = ['/events', '/messages', '/typing', '/react']
+  const protectedPaths = ['/events', '/messages', '/typing', '/react', '/conversations']
   if (protectedPaths.includes(url.pathname) && (!user || !user.verified)) return reply(res, 401, { error: 'Sign in required' })
   if (req.method === 'GET' && url.pathname === '/events') {
     res.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache', Connection: 'keep-alive' })
@@ -80,6 +80,14 @@ http.createServer(async (req, res) => {
     req.on('close', () => { const client = clients.get(id); clients.delete(id); if (client) presence() }); return
   }
   if (req.method === 'GET' && url.pathname === '/messages') { const room = resolveRoom(url.searchParams.get('room'), user); return reply(res, 200, messages.filter((item) => item.room === room).slice(-100)) }
+  if (req.method === 'GET' && url.pathname === '/conversations') {
+    const chats = new Map()
+    messages.filter((item) => item.room.startsWith('dm:') && item.room.slice(3).split(':').includes(user.id)).forEach((item) => {
+      const otherId = item.room.slice(3).split(':').find((id) => id !== user.id), other = users.find((member) => member.id === otherId)
+      if (other) chats.set(otherId, { user: publicUser(other), room: item.room, text: item.text, time: item.time })
+    })
+    return reply(res, 200, [...chats.values()].sort((a, b) => b.time.localeCompare(a.time)))
+  }
   if (req.method === 'POST' && ['/messages', '/typing', '/react'].includes(url.pathname)) {
     try {
       const input = await readBody(req), room = resolveRoom(input.room, user), client = clean(input.client, 80), name = user.name || user.email.split('@')[0]

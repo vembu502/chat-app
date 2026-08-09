@@ -1,0 +1,8 @@
+{
+  "name": "circle-chat",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node server.cjs"
+  }
+}

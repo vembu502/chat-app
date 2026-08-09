@@ -1,0 +1,22 @@
+[
+  {
+    "id": "ffde9c9f-b414-4572-a251-519c8188a200",
+    "email": "vembukhan@gmail.com",
+    "name": "",
+    "bio": "",
+    "color": "#7855d9",
+    "verified": false,
+    "salt": "33f9e2b175e054b3513644b26ff38bed",
+    "hash": "d1c45b07a8c30c548d3d5635e4de459249d455d49d8d2d8d82e19eda1e6d776ceab662e7c93cdb0e5c6f33f32828afb3c4463f5a5bd287c0aaae0624bee9edf4"
+  },
+  {
+    "id": "3ed95a00-08c8-4d9f-a784-edf3b6158425",
+    "email": "dhivakaran5225@gmail.com",
+    "name": "Raamu",
+    "bio": "student",
+    "color": "#7855d9",
+    "verified": true,
+    "salt": "9db2ad3301823e061d67b735f4fa6382",
+    "hash": "7dce4a28793b7bf90300f6668a5724a6da4bb3b6a287293e85e9c3114dbc74383cc8756fa68c3dfeea8929d7c136ecd0f64a8534a42144e8ddc587fc95f74f12"
+  }
+]

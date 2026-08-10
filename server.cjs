@@ -96,6 +96,25 @@ http.createServer(async (req, res) => {
       const text = clean(input.text, 1000); if (!text) throw new Error('Empty message'); const message = { id: crypto.randomUUID(), room, userId: user.id, name, color: user.color, text, time: new Date().toISOString(), reactions: {} }; messages.push(message); if (messages.length > 500) messages = messages.slice(-500); saveMessages(); broadcast(room, 'message', message); return reply(res, 201, message)
     } catch (error) { return reply(res, 400, { error: error.message || 'Invalid request' }) }
   }
+  if (req.method === 'GET' && url.pathname === '/robots.txt') {
+  res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' })
+  res.end(`User-agent: *
+Allow: /
+
+Sitemap: https://circle-chat-44dd.onrender.com/sitemap.xml`)
+  return
+}
+
+if (req.method === 'GET' && url.pathname === '/sitemap.xml') {
+  res.writeHead(200, { 'Content-Type': 'application/xml; charset=utf-8' })
+  res.end(`<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://circle-chat-44dd.onrender.com/</loc>
+  </url>
+</urlset>`)
+  return
+}
   const file = url.pathname === '/' ? 'index.html' : url.pathname.replace(/^\//, ''), safePath = path.join(__dirname, file)
   if (!safePath.startsWith(__dirname) || !fs.existsSync(safePath)) { res.writeHead(404).end('Not found'); return }
   res.writeHead(200, { 'Content-Type': mime[path.extname(safePath)] || 'text/plain' }); fs.createReadStream(safePath).pipe(res)
